@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Website membaca dongeng Kancil dan Buaya dalam bahasa Indonesia dengan bab interaktif, narasi suara, dan kuis.">
+<meta name="theme-color" content="#315f3b">
+<title>Kancil dan Buaya — Dongeng Interaktif</title>
+<style>
+:root{
+  --forest:#315f3b;
+  --forest-dark:#183b26;
+  --leaf:#77a95b;
+  --lime:#b7d96d;
+  --river:#74c7dc;
+  --river-dark:#3b91b1;
+  --sand:#f4d6a4;
+  --cream:#fff9eb;
+  --orange:#e99544;
+  --brown:#7a4f2a;
+  --ink:#2d3c32;
+  --muted:#65756b;
+  --white:#fff;
+  --line:rgba(53,91,62,.16);
+  --shadow:0 24px 65px rgba(32,78,48,.18);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:
+    radial-gradient(circle at 8% 4%,rgba(255,255,255,.75),transparent 26%),
+    linear-gradient(180deg,#e9f5d7 0%,#fdf8e8 38%,#e4f2d9 100%);
+  color:var(--ink);
+  line-height:1.7;
+  overflow-x:hidden;
+}
+a{text-decoration:none;color:inherit}
+button{font:inherit;cursor:pointer}
+img{display:block;width:100%}
+.container{width:min(1100px,calc(100% - 34px));margin:auto}
+.section{padding:88px 0}
+h1,h2,h3,p{margin-top:0}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif}
+h1{font-size:clamp(52px,8vw,94px);line-height:.98;letter-spacing:-.04em;margin-bottom:22px}
+h2{font-size:clamp(38px,5vw,61px);line-height:1.03;letter-spacing:-.03em}
+p{color:var(--muted)}
+.eyebrow{
+  display:inline-block;
+  color:var(--orange);
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  margin-bottom:14px;
+}
+.progress{
+  position:fixed;top:0;left:0;width:0;height:4px;
+  background:linear-gradient(90deg,var(--orange),var(--lime),var(--river));
+  z-index:120;
+  box-shadow:0 0 18px rgba(116,199,220,.7);
+}
+.leaves{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.leaf-fall{
+  position:absolute;
+  width:18px;height:10px;
+  border-radius:100% 0 100% 0;
+  background:var(--leaf);
+  opacity:.35;
+  animation:fall linear infinite;
+}
+@keyframes fall{
+  from{transform:translateY(-80px) rotate(0deg)}
+  to{transform:translateY(110vh) rotate(540deg)}
+}
+
+header{
+  position:sticky;top:0;z-index:70;
+  background:rgba(247,250,228,.88);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);
+}
+.nav{min-height:76px;display:flex;align-items:center;gap:25px}
+.brand{display:flex;align-items:center;gap:11px;min-width:max-content}
+.logo{
+  width:44px;height:44px;border-radius:50% 50% 42% 58%;
+  background:linear-gradient(145deg,var(--orange),#f5be65);
+  display:grid;place-items:center;
+  color:white;font-family:Georgia,serif;font-weight:700;
+  box-shadow:0 10px 25px rgba(233,149,68,.27);
+}
+.brand strong{display:block;font-family:Georgia,serif;font-size:20px;line-height:1}
+.brand small{display:block;margin-top:3px;font-size:8px;letter-spacing:.17em;text-transform:uppercase;color:#71806f}
+nav{display:flex;justify-content:center;gap:24px;flex:1}
+nav a{font-size:11px;font-weight:900;color:#61705f}
+nav a:hover{color:var(--orange)}
+.nav-actions{display:flex;gap:8px}
+.nav-actions button{
+  border:1px solid var(--line);background:white;border-radius:999px;
+  padding:10px 14px;font-size:10px;font-weight:900;color:var(--forest-dark)
+}
+.menu{display:none;margin-left:auto;border:0;background:transparent;font-size:26px;color:var(--forest-dark)}
+
+.hero{
+  position:relative;min-height:730px;display:flex;align-items:center;overflow:hidden
+}
+.hero:before{
+  content:"";position:absolute;width:480px;height:480px;border-radius:50%;
+  right:-140px;top:-120px;background:rgba(183,217,109,.28)
+}
+.hero:after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:120px;
+  background:linear-gradient(transparent,#eef3d8)
+}
+.hero-grid{
+  position:relative;z-index:2;
+  display:grid;grid-template-columns:1.03fr .97fr;gap:58px;align-items:center
+}
+.hero h1 em{
+  font-style:normal;
+  background:linear-gradient(90deg,#b76f2f,var(--orange),#7ea149);
+  -webkit-background-clip:text;background-clip:text;color:transparent
+}
+.hero-copy>p{font-size:18px;max-width:640px}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin:27px 0}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:49px;padding:0 21px;border-radius:999px;
+  border:1px solid transparent;font-weight:900;transition:.22s
+}
+.btn:hover{transform:translateY(-3px)}
+.btn-primary{background:linear-gradient(135deg,var(--orange),#f2b35d);color:white;box-shadow:0 14px 30px rgba(233,149,68,.26)}
+.btn-dark{background:var(--forest);color:white}
+.btn-light{background:white;border-color:var(--line)}
+.hero-stats{display:flex;gap:27px;flex-wrap:wrap;margin-top:31px}
+.hero-stats strong{display:block;font-size:21px;color:var(--forest-dark)}
+.hero-stats span{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#7a8a79}
+
+.scene{
+  position:relative;height:560px;
+  border-radius:36px 36px 14px 36px;
+  overflow:hidden;
+  background:linear-gradient(180deg,#bfe6ef 0 38%,#b8d985 38% 66%,#8dbe62 66%);
+  box-shadow:var(--shadow)
+}
+.sun{
+  position:absolute;width:100px;height:100px;border-radius:50%;
+  right:44px;top:36px;background:#ffe498;box-shadow:0 0 55px rgba(255,228,152,.9)
+}
+.cloud{position:absolute;width:110px;height:34px;background:rgba(255,255,255,.85);border-radius:999px}
+.cloud:before,.cloud:after{content:"";position:absolute;border-radius:50%;background:inherit}
+.cloud:before{width:48px;height:48px;left:18px;bottom:0}.cloud:after{width:58px;height:58px;right:17px;bottom:0}
+.cloud.a{left:45px;top:70px}.cloud.b{right:105px;top:145px;transform:scale(.72)}
+.tree{position:absolute;bottom:130px;width:34px;height:230px;background:#704924;border-radius:20px}
+.tree:before{
+  content:"";position:absolute;width:175px;height:150px;border-radius:48%;
+  background:#4f8d45;left:-70px;top:-85px;
+  box-shadow:60px 10px 0 #5c9c4c,-45px 40px 0 #6aa857,35px 58px 0 #4f8d45
+}
+.tree.left{left:70px}.tree.right{right:75px;transform:scale(.82)}
+.river{
+  position:absolute;left:-40px;right:-40px;bottom:0;height:185px;
+  background:linear-gradient(180deg,var(--river),var(--river-dark));
+  transform:skewY(-4deg);transform-origin:right bottom
+}
+.river:before,.river:after{
+  content:"";position:absolute;left:0;right:0;height:12px;
+  background:repeating-linear-gradient(90deg,transparent 0 34px,rgba(255,255,255,.5) 34px 78px,transparent 78px 120px);
+  animation:water 5s linear infinite
+}
+.river:before{top:40px}.river:after{top:105px;animation-delay:1.2s}
+@keyframes water{to{background-position:240px 0}}
+.bank{position:absolute;left:-30px;right:-30px;bottom:145px;height:65px;background:var(--sand);transform:skewY(-4deg)}
+
+.deer{
+  position:absolute;left:105px;bottom:175px;width:150px;height:175px;z-index:5;
+  animation:bob 3s ease-in-out infinite
+}
+.deer-body{position:absolute;left:25px;bottom:25px;width:100px;height:90px;border-radius:50%;background:#b9773c}
+.deer-head{position:absolute;left:88px;top:8px;width:60px;height:76px;border-radius:45% 55% 48% 52%;background:#c88749}
+.deer-neck{position:absolute;left:91px;top:60px;width:36px;height:75px;background:#bd7b42;transform:rotate(-12deg)}
+.ear{position:absolute;width:26px;height:42px;background:#b9773c;border-radius:80% 20% 70% 30%;top:-18px}.ear.a{left:3px;transform:rotate(-28deg)}.ear.b{right:4px;transform:rotate(28deg) scaleX(-1)}
+.eye{position:absolute;width:8px;height:8px;border-radius:50%;background:#1f261f;right:13px;top:28px}
+.nose{position:absolute;width:11px;height:8px;border-radius:50%;background:#34271e;right:-2px;top:48px}
+.leg{position:absolute;width:15px;height:78px;background:#a96634;bottom:-34px;border-radius:9px}.leg.a{left:39px}.leg.b{left:84px}
+.tail{position:absolute;left:8px;top:35px;width:42px;height:23px;border-radius:80% 20% 80% 20%;background:#f6e3c4;transform:rotate(25deg)}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+
+.croc{
+  position:absolute;bottom:74px;width:165px;height:75px;z-index:4;
+  animation:floatCroc 4s ease-in-out infinite
+}
+.croc.a{left:300px}.croc.b{left:460px;animation-delay:.7s}.croc.c{right:35px;animation-delay:1.4s}
+.croc-body{position:absolute;left:15px;bottom:8px;width:115px;height:48px;border-radius:55% 45% 45% 55%;background:#527f47}
+.croc-head{position:absolute;right:0;bottom:10px;width:65px;height:37px;border-radius:42% 58% 50% 50%;background:#5c8d4f}
+.croc-eye{position:absolute;width:7px;height:7px;border-radius:50%;background:#151d15;right:17px;top:7px}
+.croc-tail{position:absolute;left:0;bottom:19px;width:52px;height:20px;border-radius:100% 0 0 100%;background:#4d7444;transform:rotate(-8deg)}
+.croc-scale{position:absolute;width:10px;height:8px;background:#3f673a;clip-path:polygon(50% 0,100% 100%,0 100%);top:-5px}
+.croc-scale.s1{left:42px}.croc-scale.s2{left:67px}.croc-scale.s3{left:91px}
+@keyframes floatCroc{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+
+.story-intro{padding:24px 0;background:rgba(255,255,255,.62);border-block:1px solid var(--line)}
+.story-intro-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:17px}
+.story-intro article{display:flex;align-items:center;gap:12px}
+.info-icon{width:46px;height:46px;flex:0 0 46px;border-radius:15px;background:linear-gradient(145deg,#fff,#e8f1d2);display:grid;place-items:center;font-size:22px;box-shadow:0 10px 23px rgba(56,96,60,.1)}
+.story-intro strong{display:block;font-size:13px}
+.story-intro p{font-size:10px;margin:2px 0 0}
+
+.story{background:linear-gradient(180deg,#eef3d8,#fff9ea)}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:38px;margin-bottom:42px}
+.section-head>div{max-width:710px}
+.section-head>p{max-width:400px;margin-bottom:7px}
+.read-tools{
+  display:flex;gap:9px;flex-wrap:wrap;margin-bottom:28px
+}
+.read-tools button{
+  border:1px solid var(--line);background:white;border-radius:999px;
+  padding:10px 14px;font-size:10px;font-weight:900;color:var(--forest-dark)
+}
+.read-tools button.active{background:var(--forest);color:white}
+
+.book{
+  max-width:940px;margin:auto;
+  background:rgba(255,255,255,.7);
+  border:1px solid rgba(255,255,255,.95);
+  border-radius:28px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(13px);
+  overflow:hidden
+}
+.chapter{
+  display:grid;grid-template-columns:125px 1fr;gap:28px;
+  padding:38px;border-bottom:1px solid var(--line);
+  transition:.25s
+}
+.chapter:last-child{border-bottom:0}
+.chapter.highlight{background:rgba(183,217,109,.18)}
+.chapter-number{
+  width:100px;height:100px;border-radius:50%;
+  display:grid;place-items:center;
+  background:linear-gradient(145deg,#fff,#e4edc9);
+  font-family:Georgia,serif;font-size:35px;color:var(--forest);
+  box-shadow:inset 0 0 20px white,0 10px 24px rgba(67,105,62,.11)
+}
+.chapter h3{font-size:30px;font-weight:500;margin-bottom:9px}
+.chapter p{font-size:15px}
+.dialogue{
+  margin-top:18px;padding:20px;border-left:4px solid var(--orange);
+  background:rgba(244,214,164,.28);
+  font-family:Georgia,serif;font-size:20px;color:#5f523d
+}
+.large-text .chapter p{font-size:19px}
+.large-text .chapter h3{font-size:35px}
+
+.characters{background:#fffdf4}
+.character-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.character-card{background:white;border:1px solid var(--line);border-radius:22px;padding:25px;text-align:center;transition:.24s}
+.character-card:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+.avatar{width:94px;height:94px;border-radius:50%;margin:0 auto 15px;display:grid;place-items:center;font-size:44px;background:linear-gradient(145deg,#f8f6df,#dfecc6);box-shadow:inset 0 0 20px white}
+.character-card h3{font-size:24px;font-weight:500;margin-bottom:6px}
+.character-card p{font-size:12px;margin:0}
+
+.moral{background:linear-gradient(135deg,var(--forest),#537d4e);color:white;position:relative;overflow:hidden}
+.moral:before{content:"";position:absolute;width:430px;height:430px;border:75px solid rgba(255,255,255,.055);border-radius:50%;right:-150px;top:-155px}
+.moral-grid{position:relative;display:grid;grid-template-columns:.82fr 1.18fr;gap:55px;align-items:center}
+.moral p{color:#dce9d9}
+.moral-card{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.25);border-radius:24px;padding:32px;backdrop-filter:blur(14px)}
+.moral-card blockquote{font-family:Georgia,serif;font-size:30px;line-height:1.42;margin:0 0 20px}
+.moral-card span{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#dfeddc}
+
+.quiz{background:linear-gradient(180deg,#e8f2d7,#fdf7e8)}
+.quiz-card{
+  max-width:760px;margin:auto;background:white;border:1px solid var(--line);
+  border-radius:28px;padding:38px;box-shadow:var(--shadow)
+}
+.quiz-card h2{font-size:47px}
+.quiz-question{display:none}
+.quiz-question.active{display:block}
+.quiz-question h3{font-size:25px;font-weight:500;margin-bottom:17px}
+.answers{display:grid;gap:10px}
+.answers button{
+  border:1px solid var(--line);background:#fbfff4;border-radius:14px;
+  padding:14px;text-align:left;font-weight:800;color:var(--ink)
+}
+.answers button:hover{border-color:var(--leaf);transform:translateX(4px)}
+.answers button.correct{background:#dff3ce;border-color:#78aa59}
+.answers button.wrong{background:#ffe1d8;border-color:#d9785c}
+.quiz-result{display:none;text-align:center}
+.quiz-result.show{display:block}
+.quiz-result strong{display:block;font-size:52px;color:var(--forest);font-family:Georgia,serif}
+.quiz-nav{display:flex;justify-content:space-between;gap:12px;margin-top:20px}
+
+footer{background:var(--forest-dark);color:white;padding:50px 0 23px}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:38px}
+.footer-grid p{color:#afc7b5;font-size:11px;max-width:390px}
+.footer-grid h4{font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:#dbe9c5}
+.footer-grid a{display:block;color:#afc7b5;font-size:11px;margin:9px 0}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.14);margin-top:34px;padding-top:18px;display:flex;justify-content:space-between;color:#809a87;font-size:9px}
+
+.reveal{opacity:0;transform:translateY(34px);transition:.75s ease}
+.reveal.visible{opacity:1;transform:none}
+.toast{
+  position:fixed;left:50%;bottom:24px;transform:translate(-50%,130%);
+  background:var(--forest);color:white;border-radius:999px;padding:12px 18px;
+  font-size:11px;font-weight:900;opacity:0;z-index:130;transition:.25s
+}
+.toast.show{transform:translate(-50%,0);opacity:1}
+
+@media(max-width:900px){
+  .menu{display:block}
+  nav{display:none;position:absolute;left:18px;right:18px;top:76px;background:#f5fae6;border:1px solid var(--line);padding:15px;border-radius:16px;box-shadow:var(--shadow);flex-direction:column;align-items:stretch}
+  nav.open{display:flex}
+  .nav-actions{display:none}
+  .hero{min-height:auto;padding:85px 0}
+  .hero-grid,.moral-grid{grid-template-columns:1fr}
+  .scene{max-width:660px;margin:auto;width:100%}
+  .story-intro-grid{grid-template-columns:1fr 1fr}
+  .character-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1.5fr 1fr}
+}
+@media(max-width:580px){
+  .container{width:min(100% - 24px,1100px)}
+  .section{padding:67px 0}
+  h1{font-size:48px}h2{font-size:38px}
+  .actions .btn{width:100%}
+  .scene{height:480px}
+  .deer{left:25px;transform:scale(.83);transform-origin:bottom}
+  .croc.a{left:180px}.croc.b{left:310px}.croc.c{right:-55px}
+  .tree.left{left:25px}.tree.right{right:20px}
+  .story-intro-grid{grid-template-columns:1fr}
+  .chapter{grid-template-columns:1fr;padding:27px}
+  .chapter-number{width:75px;height:75px;font-size:28px}
+  .section-head{display:block}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .footer-grid>div:first-child{grid-column:1/-1}
+  .footer-bottom{flex-direction:column;gap:8px}
+  .quiz-card{padding:28px 20px}
+  .quiz-card h2{font-size:38px}
+}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="leaves" id="leaves"></div>
+
+<header>
+  <div class="container nav">
+    <a class="brand" href="#beranda">
+      <span class="logo">KB</span>
+      <span><strong>Kancil & Buaya</strong><small>Dongeng Interaktif</small></span>
+    </a>
+    <button class="menu" aria-label="Buka menu">☰</button>
+    <nav>
+      <a href="#cerita">Cerita</a>
+      <a href="#tokoh">Tokoh</a>
+      <a href="#pesan">Pesan Moral</a>
+      <a href="#kuis">Kuis</a>
+    </nav>
+    <div class="nav-actions">
+      <button id="voiceBtn">🔊 Baca Suara</button>
+      <button id="startBtn">Mulai Membaca</button>
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="beranda">
+  <div class="container hero-grid">
+    <div class="hero-copy reveal">
+      <span class="eyebrow">Dongeng rakyat Indonesia</span>
+      <h1>Kisah cerdik tentang <em>Kancil dan Buaya.</em></h1>
+      <p>Suatu hari, Kancil ingin menyeberangi sungai untuk mencari buah-buahan. Namun sungai itu dipenuhi buaya yang sedang lapar. Dengan kecerdikannya, Kancil menemukan sebuah cara.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="#cerita">Baca Dongeng</a>
+        <a class="btn btn-light" href="#kuis">Mainkan Kuis</a>
+      </div>
+      <div class="hero-stats">
+        <div><strong>5 bab</strong><span>Cerita singkat</span></div>
+        <div><strong>3 tokoh</strong><span>Mudah dipahami</span></div>
+        <div><strong>3 soal</strong><span>Kuis membaca</span></div>
+      </div>
+    </div>
+
+    <div class="scene reveal">
+      <div class="sun"></div>
+      <div class="cloud a"></div><div class="cloud b"></div>
+      <div class="tree left"></div><div class="tree right"></div>
+      <div class="bank"></div>
+      <div class="river"></div>
+
+      <div class="deer">
+        <div class="tail"></div>
+        <div class="deer-body"></div>
+        <div class="neck"></div>
+        <div class="leg a"></div><div class="leg b"></div>
+        <div class="deer-head">
+          <span class="ear a"></span><span class="ear b"></span>
+          <span class="eye"></span><span class="nose"></span>
+        </div>
+      </div>
+
+      <div class="croc a"><div class="croc-tail"></div><div class="croc-body"><i class="croc-scale s1"></i><i class="croc-scale s2"></i><i class="croc-scale s3"></i></div><div class="croc-head"><span class="croc-eye"></span></div></div>
+      <div class="croc b"><div class="croc-tail"></div><div class="croc-body"><i class="croc-scale s1"></i><i class="croc-scale s2"></i><i class="croc-scale s3"></i></div><div class="croc-head"><span class="croc-eye"></span></div></div>
+      <div class="croc c"><div class="croc-tail"></div><div class="croc-body"><i class="croc-scale s1"></i><i class="croc-scale s2"></i><i class="croc-scale s3"></i></div><div class="croc-head"><span class="croc-eye"></span></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="story-intro">
+  <div class="container story-intro-grid">
+    <article><span class="info-icon">🌳</span><div><strong>Hutan yang Hijau</strong><p>Tempat Kancil mencari makanan.</p></div></article>
+    <article><span class="info-icon">🦌</span><div><strong>Kancil yang Cerdik</strong><p>Kecil, lincah, dan cepat berpikir.</p></div></article>
+    <article><span class="info-icon">🐊</span><div><strong>Para Buaya</strong><p>Menunggu mangsa di dalam sungai.</p></div></article>
+    <article><span class="info-icon">🍎</span><div><strong>Kebun Buah</strong><p>Tujuan Kancil di seberang sungai.</p></div></article>
+  </div>
+</section>
+
+<section class="section story" id="cerita">
+  <div class="container">
+    <div class="section-head reveal">
+      <div><span class="eyebrow">Mulai membaca</span><h2>Dongeng Kancil dan Buaya.</h2></div>
+      <p>Klik tombol narasi untuk mendengarkan cerita atau gunakan mode huruf besar agar lebih nyaman dibaca.</p>
+    </div>
+
+    <div class="read-tools reveal">
+      <button id="narrateBtn">🔊 Putar Narasi</button>
+      <button id="pauseBtn">⏸ Jeda</button>
+      <button id="stopBtn">⏹ Berhenti</button>
+      <button id="fontBtn">A+ Huruf Besar</button>
+      <button id="focusBtn">◎ Fokus Bab</button>
+    </div>
+
+    <div class="book" id="book">
+      <article class="chapter reveal" data-chapter="1">
+        <div class="chapter-number">01</div>
+        <div>
+          <span class="eyebrow">Kancil merasa lapar</span>
+          <h3>Buah di seberang sungai</h3>
+          <p>Pada suatu pagi yang cerah, Kancil berjalan-jalan di tengah hutan. Perutnya berbunyi karena ia belum makan sejak malam.</p>
+          <p>Dari kejauhan, Kancil melihat sebuah kebun yang penuh dengan mentimun, apel, dan buah-buahan segar. Sayangnya, kebun itu berada di seberang sungai yang lebar.</p>
+          <div class="dialogue">“Wah, buah-buah itu terlihat sangat lezat. Tetapi bagaimana caranya aku menyeberang?” pikir Kancil.</div>
+        </div>
+      </article>
+
+      <article class="chapter reveal" data-chapter="2">
+        <div class="chapter-number">02</div>
+        <div>
+          <span class="eyebrow">Sungai yang berbahaya</span>
+          <h3>Para buaya menunggu</h3>
+          <p>Kancil mendekati tepian sungai. Ia melihat banyak mata dan punggung buaya muncul di atas air.</p>
+          <p>Buaya-buaya itu sedang lapar. Kancil tahu bahwa ia tidak mungkin berenang melewati mereka dengan selamat.</p>
+          <div class="dialogue">Seekor buaya berkata, “Kancil, masuklah ke dalam sungai. Kami sudah lama menunggumu!”</div>
+        </div>
+      </article>
+
+      <article class="chapter reveal" data-chapter="3">
+        <div class="chapter-number">03</div>
+        <div>
+          <span class="eyebrow">Ide Kancil</span>
+          <h3>Menghitung jumlah buaya</h3>
+          <p>Kancil tidak langsung berlari. Ia justru tersenyum dan berkata bahwa Raja Hutan sedang mengadakan pesta besar.</p>
+          <p>Menurut Kancil, semua buaya akan mendapat daging segar. Namun, Kancil harus menghitung jumlah mereka terlebih dahulu.</p>
+          <div class="dialogue">“Berbarislah dari tepian ini sampai ke seberang. Aku akan melompat di atas punggung kalian sambil menghitung,” kata Kancil.</div>
+        </div>
+      </article>
+
+      <article class="chapter reveal" data-chapter="4">
+        <div class="chapter-number">04</div>
+        <div>
+          <span class="eyebrow">Menyeberangi sungai</span>
+          <h3>Satu, dua, tiga...</h3>
+          <p>Para buaya percaya dan segera berbaris dengan rapi. Punggung mereka membentuk jembatan panjang di atas air.</p>
+          <p>Kancil melompat dari satu punggung ke punggung lainnya sambil menghitung dengan keras.</p>
+          <div class="dialogue">“Satu, dua, tiga, empat... teruslah diam agar aku tidak salah menghitung!”</div>
+        </div>
+      </article>
+
+      <article class="chapter reveal" data-chapter="5">
+        <div class="chapter-number">05</div>
+        <div>
+          <span class="eyebrow">Kancil berhasil</span>
+          <h3>Buaya menyadari tipuannya</h3>
+          <p>Setelah menginjak punggung buaya terakhir, Kancil melompat ke daratan. Ia tertawa kecil karena berhasil menyeberang.</p>
+          <p>Kancil kemudian berkata bahwa tidak ada pesta dari Raja Hutan. Ia hanya membutuhkan bantuan mereka untuk menyeberang.</p>
+          <div class="dialogue">“Terima kasih, Buaya! Sekarang aku dapat menikmati buah-buahan di kebun!” seru Kancil sambil berlari.</div>
+          <p>Para buaya marah karena merasa ditipu. Namun Kancil sudah jauh meninggalkan sungai.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section characters" id="tokoh">
+  <div class="container">
+    <div class="section-head reveal">
+      <div><span class="eyebrow">Tokoh cerita</span><h2>Siapa saja yang ada dalam dongeng?</h2></div>
+    </div>
+    <div class="character-grid">
+      <article class="character-card reveal"><div class="avatar">🦌</div><h3>Kancil</h3><p>Hewan kecil yang cerdik, cepat berpikir, dan mampu keluar dari situasi sulit.</p></article>
+      <article class="character-card reveal"><div class="avatar">🐊</div><h3>Para Buaya</h3><p>Hewan kuat yang hidup di sungai, tetapi terlalu mudah percaya pada janji Kancil.</p></article>
+      <article class="character-card reveal"><div class="avatar">👑</div><h3>Raja Hutan</h3><p>Tidak muncul langsung dalam cerita, tetapi namanya digunakan oleh Kancil untuk meyakinkan para buaya.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="section moral" id="pesan">
+  <div class="container moral-grid">
+    <div class="reveal">
+      <span class="eyebrow">Pesan moral</span>
+      <h2>Kecerdikan harus digunakan dengan bijak.</h2>
+      <p>Kita perlu berpikir tenang ketika menghadapi masalah. Namun, kita juga tidak boleh berbohong atau memanfaatkan kepercayaan orang lain hanya untuk kepentingan sendiri.</p>
+    </div>
+    <div class="moral-card reveal">
+      <blockquote>“Pikiran yang tenang dapat menemukan jalan keluar, tetapi kejujuran tetap harus dijaga.”</blockquote>
+      <span>Pelajaran dari Kancil dan Buaya</span>
+    </div>
+  </div>
+</section>
+
+<section class="section quiz" id="kuis">
+  <div class="container">
+    <div class="quiz-card reveal">
+      <span class="eyebrow">Kuis membaca</span>
+      <h2>Sudah memahami ceritanya?</h2>
+
+      <div class="quiz-question active" data-index="0">
+        <h3>1. Mengapa Kancil ingin menyeberangi sungai?</h3>
+        <div class="answers">
+          <button data-correct="true">Untuk mengambil buah-buahan di seberang sungai.</button>
+          <button>Untuk mencari rumah baru.</button>
+          <button>Untuk menemui Raja Hutan.</button>
+        </div>
+      </div>
+
+      <div class="quiz-question" data-index="1">
+        <h3>2. Apa yang diminta Kancil kepada para buaya?</h3>
+        <div class="answers">
+          <button>Untuk membawakan makanan.</button>
+          <button data-correct="true">Untuk berbaris agar dapat dihitung.</button>
+          <button>Untuk meninggalkan sungai.</button>
+        </div>
+      </div>
+
+      <div class="quiz-question" data-index="2">
+        <h3>3. Apa pesan penting dari cerita ini?</h3>
+        <div class="answers">
+          <button>Orang kuat selalu menang.</button>
+          <button>Tidak perlu mendengarkan orang lain.</button>
+          <button data-correct="true">Gunakan kecerdikan dengan bijak dan tetap jujur.</button>
+        </div>
+      </div>
+
+      <div class="quiz-result" id="quizResult">
+        <strong id="scoreText">0/3</strong>
+        <h3>Kuis selesai!</h3>
+        <p id="resultMessage"></p>
+        <button class="btn btn-primary" id="restartQuiz">Ulangi Kuis</button>
+      </div>
+
+      <div class="quiz-nav" id="quizNav">
+        <span id="questionCount">Soal 1 dari 3</span>
+        <button class="btn btn-dark" id="nextQuestion" disabled>Soal Berikutnya</button>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container footer-grid">
+    <div>
+      <a class="brand" href="#beranda"><span class="logo">KB</span><span><strong>Kancil & Buaya</strong><small>Dongeng Interaktif</small></span></a>
+      <p>Website membaca dongeng rakyat Indonesia dengan narasi suara, mode huruf besar, dan kuis interaktif.</p>
+    </div>
+    <div><h4>Navigasi</h4><a href="#cerita">Cerita</a><a href="#tokoh">Tokoh</a><a href="#pesan">Pesan Moral</a></div>
+    <div><h4>Aktivitas</h4><a href="#kuis">Kuis Membaca</a><a href="#beranda">Baca Ulang</a><a href="#cerita">Mulai Cerita</a></div>
+  </div>
+  <div class="container footer-bottom"><span>© 2026 Dongeng Kancil dan Buaya.</span><span>Website edukasi membaca dalam bahasa Indonesia.</span></div>
+</footer>
+
+<div class="toast" id="toast">Narasi dimulai 🔊</div>
+
+<script>
+const leaves=document.getElementById("leaves");
+for(let i=0;i<22;i++){
+  const leaf=document.createElement("span");
+  leaf.className="leaf-fall";
+  leaf.style.left=Math.random()*100+"%";
+  leaf.style.animationDuration=(8+Math.random()*12)+"s";
+  leaf.style.animationDelay=(-Math.random()*16)+"s";
+  leaf.style.background=["#77a95b","#b7d96d","#e99544"][Math.floor(Math.random()*3)];
+  leaves.appendChild(leaf);
+}
+
+const menu=document.querySelector(".menu"),nav=document.querySelector("nav");
+menu.addEventListener("click",()=>{
+  nav.classList.toggle("open");
+  menu.textContent=nav.classList.contains("open")?"✕":"☰";
+});
+document.querySelectorAll("nav a").forEach(a=>a.addEventListener("click",()=>{
+  nav.classList.remove("open");
+  menu.textContent="☰";
+}));
+
+document.getElementById("startBtn").addEventListener("click",()=>{
+  document.getElementById("cerita").scrollIntoView({behavior:"smooth"});
+});
+
+const storyText=[...document.querySelectorAll(".chapter")]
+  .map(ch=>ch.innerText.replace(/\s+/g," ").trim()).join(". ");
+
+let speech=null;
+const toast=document.getElementById("toast");
+function notify(message){
+  toast.textContent=message;
+  toast.classList.add("show");
+  clearTimeout(window.toastTimer);
+  window.toastTimer=setTimeout(()=>toast.classList.remove("show"),1700);
+}
+function startNarration(){
+  if(!("speechSynthesis" in window)){
+    notify("Browser ini belum mendukung narasi suara.");
+    return;
+  }
+  speechSynthesis.cancel();
+  speech=new SpeechSynthesisUtterance(storyText);
+  speech.lang="id-ID";
+  speech.rate=.88;
+  speech.pitch=1.03;
+  speech.onend=()=>notify("Narasi selesai.");
+  speechSynthesis.speak(speech);
+  notify("Narasi dimulai 🔊");
+}
+document.getElementById("narrateBtn").addEventListener("click",startNarration);
+document.getElementById("voiceBtn").addEventListener("click",startNarration);
+document.getElementById("pauseBtn").addEventListener("click",()=>{
+  if(speechSynthesis.speaking){
+    if(speechSynthesis.paused){
+      speechSynthesis.resume();notify("Narasi dilanjutkan.");
+    }else{
+      speechSynthesis.pause();notify("Narasi dijeda.");
+    }
+  }
+});
+document.getElementById("stopBtn").addEventListener("click",()=>{
+  speechSynthesis.cancel();notify("Narasi dihentikan.");
+});
+
+document.getElementById("fontBtn").addEventListener("click",e=>{
+  document.getElementById("book").classList.toggle("large-text");
+  e.target.classList.toggle("active");
+});
+
+let focusMode=false;
+document.getElementById("focusBtn").addEventListener("click",e=>{
+  focusMode=!focusMode;
+  e.target.classList.toggle("active",focusMode);
+  document.querySelectorAll(".chapter").forEach(ch=>{
+    ch.addEventListener("mouseenter",()=>focusMode&&ch.classList.add("highlight"));
+    ch.addEventListener("mouseleave",()=>ch.classList.remove("highlight"));
+  });
+  notify(focusMode?"Mode fokus aktif.":"Mode fokus dimatikan.");
+});
+
+let currentQuestion=0,score=0,answered=false;
+const questions=[...document.querySelectorAll(".quiz-question")];
+const nextBtn=document.getElementById("nextQuestion");
+const countText=document.getElementById("questionCount");
+
+function bindAnswers(){
+  questions.forEach((question,index)=>{
+    question.querySelectorAll(".answers button").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        if(index!==currentQuestion||answered)return;
+        answered=true;
+        question.querySelectorAll("button").forEach(b=>b.disabled=true);
+        if(btn.dataset.correct==="true"){
+          btn.classList.add("correct");
+          score++;
+          notify("Jawaban benar! 🌟");
+        }else{
+          btn.classList.add("wrong");
+          question.querySelector('[data-correct="true"]').classList.add("correct");
+          notify("Belum tepat. Lihat jawaban yang benar.");
+        }
+        nextBtn.disabled=false;
+      });
+    });
+  });
+}
+bindAnswers();
+
+nextBtn.addEventListener("click",()=>{
+  if(!answered)return;
+  if(currentQuestion<questions.length-1){
+    questions[currentQuestion].classList.remove("active");
+    currentQuestion++;
+    questions[currentQuestion].classList.add("active");
+    answered=false;
+    nextBtn.disabled=true;
+    countText.textContent=`Soal ${currentQuestion+1} dari ${questions.length}`;
+    if(currentQuestion===questions.length-1)nextBtn.textContent="Lihat Hasil";
+  }else{
+    questions[currentQuestion].classList.remove("active");
+    document.getElementById("quizResult").classList.add("show");
+    document.getElementById("quizNav").style.display="none";
+    document.getElementById("scoreText").textContent=`${score}/${questions.length}`;
+    document.getElementById("resultMessage").textContent=
+      score===3?"Hebat! Kamu memahami seluruh cerita.":
+      score===2?"Bagus! Kamu sudah memahami sebagian besar cerita.":
+      "Yuk, baca ceritanya sekali lagi agar semakin paham.";
+  }
+});
+
+document.getElementById("restartQuiz").addEventListener("click",()=>{
+  currentQuestion=0;score=0;answered=false;
+  document.getElementById("quizResult").classList.remove("show");
+  document.getElementById("quizNav").style.display="flex";
+  countText.textContent="Soal 1 dari 3";
+  nextBtn.textContent="Soal Berikutnya";
+  nextBtn.disabled=true;
+  questions.forEach((q,i)=>{
+    q.classList.toggle("active",i===0);
+    q.querySelectorAll("button").forEach(b=>{
+      b.disabled=false;b.classList.remove("correct","wrong");
+    });
+  });
+});
+
+window.addEventListener("scroll",()=>{
+  const d=document.documentElement;
+  document.getElementById("progress").style.width=(d.scrollTop/(d.scrollHeight-d.clientHeight)*100)+"%";
+});
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add("visible");
+      observer.unobserve(entry.target);
+    }
+  });
+},{threshold:.12});
+document.querySelectorAll(".reveal").forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>
